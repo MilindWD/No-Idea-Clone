@@ -39,11 +39,11 @@ app.get('', (req,res) => {
         return;
     }
     if(req.query.download){
-        // YD.download(req.query.download);
-        // YD.on("finished", function(err, data) {
-        //     res.send(JSON.stringify(data));
-        // });
-        res.send(downloadsFolder());
+        YD.download(req.query.download);
+        YD.on("finished", function(err, data) {
+            res.send(JSON.stringify(data));
+        });
+        // res.send(downloadsFolder());
     }
 });
 
