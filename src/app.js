@@ -3,8 +3,7 @@ const path = require('path');
 const express = require('express');
 const hbs = require('hbs');
 const yts = require( 'yt-search' );
-const e = require('express');
-
+const YD = require('./utils/ytmp3');
 
 const app = express();
 const port = process.env.PORT||3000;
@@ -24,17 +23,26 @@ app.use(express.static(publicDir));
 
 //Routes
 app.get('', (req,res) => {
-    yts( {query: req.query.q}, function ( err, r ) {
-        // if (err){
-        //     return res.send({error: err});
-        // }
-        res.send({
-            id: r.all[0].videoId,
-            title: r.all[0].title,
-            thumbnail: r.all[0].thumbnail,
-            time: r.all[0].duration.seconds
+    if(req.query.search){
+        yts( {query: req.query.search}, function ( err, r ) {
+            // if (err){
+            //     return res.send({error: err});
+            // }
+            res.send({
+                id: r.all[0].videoId,
+                title: r.all[0].title,
+                thumbnail: r.all[0].thumbnail,
+                time: r.all[0].duration.seconds
+            });
         });
-    });
+        return;
+    }
+    if(req.query.download){
+        YD.download(req.query.download);
+        YD.on("finished", function(err, data) {
+            res.send(JSON.stringify(data));
+        });
+    }
 });
 
 //Listen
