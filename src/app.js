@@ -2,6 +2,9 @@
 const path = require('path');
 const express = require('express');
 const hbs = require('hbs');
+const yts = require( 'yt-search' );
+const e = require('express');
+
 
 const app = express();
 const port = process.env.PORT||3000;
@@ -21,8 +24,16 @@ app.use(express.static(publicDir));
 
 //Routes
 app.get('', (req,res) => {
-    res.render('index',{
-        message: "workflow"
+    yts( {query: 'numb'}, function ( err, r ) {
+        // if (err){
+        //     return res.send({error: err});
+        // }
+        res.send({
+            id: r.all[0].videoId,
+            title: r.all[0].title,
+            thumbnail: r.all[0].thumbnail,
+            time: r.all[0].duration.seconds
+        });
     });
 });
 
