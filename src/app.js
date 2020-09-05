@@ -4,6 +4,7 @@ const express = require('express');
 const hbs = require('hbs');
 const yts = require( 'yt-search' );
 const YD = require('./utils/ytmp3');
+const downloadsFolder = require('downloads-folder');
 
 const app = express();
 const port = process.env.PORT||3000;
@@ -38,10 +39,11 @@ app.get('', (req,res) => {
         return;
     }
     if(req.query.download){
-        YD.download(req.query.download);
-        YD.on("finished", function(err, data) {
-            res.send(JSON.stringify(data));
-        });
+        // YD.download(req.query.download);
+        // YD.on("finished", function(err, data) {
+        //     res.send(JSON.stringify(data));
+        // });
+        res.send(downloadsFolder());
     }
 });
 
