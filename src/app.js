@@ -24,7 +24,7 @@ app.use(express.static(publicDir));
 
 //Routes
 app.get('', (req,res) => {
-    yts( {query: 'numb'}, function ( err, r ) {
+    yts( {query: req.query.q}, function ( err, r ) {
         // if (err){
         //     return res.send({error: err});
         // }
