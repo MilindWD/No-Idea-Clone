@@ -3,8 +3,7 @@ const path = require('path');
 const express = require('express');
 const hbs = require('hbs');
 const yts = require( 'yt-search' );
-const YD = require('./utils/ytmp3');
-const downloadsFolder = require('downloads-folder');
+const getMP3URL = require('./utils/ytmp3');
 
 const app = express();
 const port = process.env.PORT||3000;
@@ -23,12 +22,9 @@ hbs.registerPartials(partialDir);
 app.use(express.static(publicDir));
 
 //Routes
-app.get('', (req,res) => {
-    if(req.query.search){
-        yts( {query: req.query.search}, function ( err, r ) {
-            // if (err){
-            //     return res.send({error: err});
-            // }
+app.get('/search/:q', (req,res) => {
+    if(req.params.q){
+        yts( {query: req.params.q}, function ( err, r ) {
             res.send({
                 id: r.all[0].videoId,
                 title: r.all[0].title,
@@ -36,16 +32,15 @@ app.get('', (req,res) => {
                 time: r.all[0].duration.seconds
             });
         });
-        return;
-    }
-    if(req.query.download){
-        YD.download(req.query.download);
-        YD.on("finished", function(err, data) {
-            res.send(JSON.stringify(data));
-        });
-        // res.send(downloadsFolder());
     }
 });
+
+app.get('/download/:id', async (req, res) => {
+    res.send({
+        url: await getMP3URL(req.params.id)
+    });
+});
+
 
 //Listen
 app.listen(port, ()=>{
